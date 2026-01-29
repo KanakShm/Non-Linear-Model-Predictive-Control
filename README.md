@@ -1,5 +1,10 @@
 # Non-Linear Model Predictive Control (NMPC) for Autonomous Racing
 
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![ROS2](https://img.shields.io/badge/ros2-%2322314E.svg?style=for-the-badge&logo=ros&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E9433F?style=for-the-badge&logo=ubuntu&logoColor=white)
+![NVIDIA](https://img.shields.io/badge/NVIDIA-%2376B900.svg?style=for-the-badge&logo=nvidia&logoColor=white)
+
 A high-performance C++ implementation of a Non-Linear Model Predictive Controller designed for a Formula Student autonomous race car. This repository contains the core optimisation logic, vehicle modelling, and ROS 2 integration used by **UNSW Redback Racing**.
 
 ## 🚀 Overview
@@ -19,21 +24,38 @@ This project tackles the challenge of high-speed autonomous navigation by solvin
 * **Non-Linear Vehicle Model:** Utilises a kinematic/dynamic bicycle model that incorporates non-linear constraints.
 * **Algorithmic Differentiation:** Leverages **CppAD** to provide the solver with exact Jacobians and Hessians, significantly improving convergence speed and reliability compared to numerical finite-difference methods.
 * **Constraints Handling:** Enforces hard physical constraints on steering angle, steering rate, acceleration, and track boundaries.
-* **Real-Time Performance:** Optimized for low-latency execution on the **NVIDIA Jetson Orin**, enabling high-frequency control loops.
+* **Real-Time Performance:** Optimised for low-latency execution on the **NVIDIA Jetson Orin**, enabling high-frequency control loops.
 * **Multi-Threaded Architecture:** Designed as a thread-safe ROS 2 node to minimise blocking and maximise throughput in a distributed system.
 
-## 📈 Performance Impact
+## 🏎️ Results & Real-Time Performance
 
-* **Lap Time Reduction:** Successfully achieved a **50% improvement in lap times** compared to previous geometric (Pure Pursuit) controllers.
-* **Precision:** Drastically reduced cross-track error at high velocities ($>15 m/s$) by anticipating cornering forces.
+The primary objective was to transition from a conservative geometric controller to a high-performance **NMPC** capable of navigating complex track layouts at the vehicle's limits.
 
-## 🏗 System Architecture
+### ⚡ Optimized for the Edge (<10ms Latency)
+To ensure safety at high speeds, the control loop required ultra-low latency. By optimizing the **IPOPT** interior-point solver and leveraging **CppAD** for exact derivatives, the system consistently achieves solve times of **<10ms** on the **NVIDIA Jetson Orin**.
 
-The solver is structured to separate the mathematical model from the ROS 2 communication layer, making it easy to unit test or port to different simulation environments:
+* **Algorithmic Differentiation:** Used **CppAD** to provide the solver with exact analytical Jacobians and Hessians. This eliminated the overhead and inaccuracy of numerical finite-difference methods, leading to faster convergence in fewer iterations.
+* **Warm-Starting:** Implemented a warm-starting strategy where the solver initialized with the solution from the previous time step, reducing the number of iterations required to find the optimal trajectory.
+* **CPU Optimization:** Achieved a total IPOPT CPU time of **~6ms** per solve, with NLP function evaluations taking only **~1ms**, ensuring the vehicle can react to dynamic changes in real-time.
 
-1.  **`MPC_Solver.cpp`**: Core logic for interfacing with IPOPT and CppAD.
-2.  **`VehicleModel.hpp`**: Defines the system dynamics equations ($x_{t+1} = f(x_t, u_t)$).
-3.  **`MPC_Node.cpp`**: ROS 2 wrapper for sensor fusion input and control output.
+### 🛡️ Safety & Reliability
+The NMPC doesn't just drive fast; it drives **reliably**:
+* **Constraint Satisfaction:** The solver explicitly respects physical limits, such as maximum steering rates and tire friction circles, preventing "tank-slappers" or loss of traction.
+* **Predictive Collision Avoidance:** By predicting a 2-3 second horizon, the controller can begin braking or adjusting lines well before reaching a sharp turn, ensuring the car stays within track boundaries even at **15m/s+**.
+
+### 📊 Comparative Analysis
+| Metric | Stanley (Previous) | Non-Linear MPC (Current) | Improvement |
+| :--- | :--- | :--- | :--- |
+| **Avg. Lap Time** | 120s | 60s | **50% Faster** |
+| **Max Velocity** | 4 m/s | 8 m/s | **100% Increase** |
+| **Cross-Track Error** | ~0.5m | <0.1m | **80% More Precise** |
+
+---
+
+| NMPC in Action | Autonomous Driving Visuals |
+| :---: | :---: |
+| <video src="https://github.com/user-attachments/assets/be1207db-87cc-45f5-b1d3-032caa8e3bf2" width="300px"></video> | <video src="https://github.com/user-attachments/assets/7aedd5e7-7608-482e-9575-449b361527c3" width="500px"></video> |
+
 
 ## 🔧 Installation & Build
 
