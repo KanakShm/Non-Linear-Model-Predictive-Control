@@ -1,0 +1,77 @@
+---
+mpc_node:
+  ros__parameters:
+    subscriptions:
+      waypoints_topic_: /waypoints
+      wheel_speeds_topic_: /wheel_speeds
+      lap_count_topic_: /lap_count
+
+    publishers:
+      predicted_trajectory_topic_: /predicted_trajectory
+      MPC_velocity_vector_topic_: /MPC_velocity_vector
+      cmd_topic_: /cmd
+      torque_request_topic_: /torque_request
+      control_systems_debug_topic_: /control_systems_debug
+      qos_: 10
+
+    universal:
+      car_length_: 0.69          # Sim = 0.9375m, RB25 = 1.6m
+
+    misc:
+      waypoint_timeout_: 1000   # In milliseconds
+      period_: 20               # How fast we run MPC in milliseconds
+      dt_prop_: 0.20            # Propagate the state forward before feeding it to optimiser
+      horizon_dist_: 30.0       # Max distance to cut waypoints off in metres
+      step_size_: 8.0           # Filter waypoints by step size
+      control_delay_: 0.0       # How long LLC takes to start actuation
+      waypoint_offset: 0.0
+
+    # Setting up the boundary conditions for the state vector. Hard upper and lower
+    # limits that MPC will never cross.
+    MPC:
+      # Positional bounds.
+      pose_lowerbound: -10.0
+      pose_upperbound: 10.0
+
+      # Hard limits for velocity.
+      v_lowerbound: -20.0
+      v_upperbound: 50.0
+
+      # Hard limits for cross-track error.
+      cte_lowerbound: -10.0
+      cte_upperbound: 10.0
+
+      # Hard limits for heading error.
+      epsi_lowerbound: -10.0
+      epsi_upperbound: 10.0
+
+      # Hard limits for steering.
+      delta_deg_lowerbound: -20.0
+      delta_deg_upperbound: 20.0
+      
+      # Hard limits for acceleration.
+      a_lowerbound: -1.4
+      a_upperbound: 4.0
+
+    # The cost function weights are how much you want MPC to prioritise minimising...
+    FG_eval:
+      wt1: 10000    # Cross-track error
+      wt2: 12000    # Heading error
+      wt3: 500      # Current vel and reference vel
+      wt4: 1000     # Heading error * current velocity (Go slower on corners and/or steer more)
+      wt5: 20       # Trying not to go towards the bounds of steering
+      wt6: 0        # Trying not to go towards the bounds of acceleration
+      wt7: 7500     # Rate of change of steering (higher weight means don't change as much)
+      wt8: 0        # Rate of change of acceleration (higher weight means don't change as much)
+      wt9: 0        # Heading error * steering (This is bullshit I'll worry about it later)
+      wt10: 0       # Heading error * acceleration (Accelerate less on corners and/or steer more)
+      wt11: 0       # Cross-track error * current velocity
+
+    Horizon:
+      N: 5          # Time steps MPC predicts off of.
+      dt: 0.2       # Difference in each time step in seconds.
+      ref_cte: 0.0
+      ref_epsi: 0.0
+      ref_v: 20           # Discovery lap speed recommendation.
+      hot_lap_speed: 20.0  # Hot lap speed recomendation
+      hot_lap_speed_weight: 500
