@@ -11,6 +11,8 @@ A high-performance C++ implementation of a Non-Linear Model Predictive Controlle
 
 This project tackles the challenge of high-speed autonomous navigation by solving a constrained non-linear optimisation problem in real-time. By predicting future vehicle states and optimising control inputs over a receding horizon, the controller accounts for non-linear vehicle dynamics and tire slip, which are critical at the limits of handling.
 
+![RB25](https://github.com/user-attachments/assets/9f908056-de76-4f4b-ac26-7a2e891ce93a)
+
 ## 🛠 Technical Stack
 
 * **Language:** C++17/20
@@ -31,6 +33,10 @@ This project tackles the challenge of high-speed autonomous navigation by solvin
 
 The primary objective was to transition from a conservative geometric controller to a high-performance **NMPC** capable of navigating complex track layouts at the vehicle's limits.
 
+| NMPC in Action | Autonomous Driving Visuals |
+| :---: | :---: |
+| <video src="https://github.com/user-attachments/assets/be1207db-87cc-45f5-b1d3-032caa8e3bf2" width="300px"></video> | <video src="https://github.com/user-attachments/assets/7aedd5e7-7608-482e-9575-449b361527c3" width="500px"></video> |
+
 ### ⚡ Optimized for the Edge (<10ms Latency)
 To ensure safety at high speeds, the control loop required ultra-low latency. By optimizing the **IPOPT** interior-point solver and leveraging **CppAD** for exact derivatives, the system consistently achieves solve times of **<10ms** on the **NVIDIA Jetson Orin**.
 
@@ -49,13 +55,6 @@ The NMPC doesn't just drive fast; it drives **reliably**:
 | **Avg. Lap Time** | 120s | 60s | **50% Faster** |
 | **Max Velocity** | 4 m/s | 8 m/s | **100% Increase** |
 | **Cross-Track Error** | ~0.5m | <0.1m | **80% More Precise** |
-
----
-
-| NMPC in Action | Autonomous Driving Visuals |
-| :---: | :---: |
-| <video src="https://github.com/user-attachments/assets/be1207db-87cc-45f5-b1d3-032caa8e3bf2" width="300px"></video> | <video src="https://github.com/user-attachments/assets/7aedd5e7-7608-482e-9575-449b361527c3" width="500px"></video> |
-
 
 ## 🔧 Installation & Build
 
