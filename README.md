@@ -21,14 +21,6 @@ This project tackles the challenge of high-speed autonomous navigation by solvin
 * **Middleware:** ROS 2 (Humble)
 * **Linear Algebra:** Eigen 3
 
-## ✨ Key Features
-
-* **Non-Linear Vehicle Model:** Utilises a kinematic/dynamic bicycle model that incorporates non-linear constraints.
-* **Algorithmic Differentiation:** Leverages **CppAD** to provide the solver with exact Jacobians and Hessians, significantly improving convergence speed and reliability compared to numerical finite-difference methods.
-* **Constraints Handling:** Enforces hard physical constraints on steering angle, steering rate, acceleration, and track boundaries.
-* **Real-Time Performance:** Optimised for low-latency execution on the **NVIDIA Jetson Orin**, enabling high-frequency control loops.
-* **Multi-Threaded Architecture:** Designed as a thread-safe ROS 2 node to minimise blocking and maximise throughput in a distributed system.
-
 ## 🏎️ Results & Real-Time Performance
 
 The primary objective was to transition from a conservative geometric controller to a high-performance **NMPC** capable of navigating complex track layouts at the vehicle's limits.
@@ -41,12 +33,13 @@ The primary objective was to transition from a conservative geometric controller
 To ensure safety at high speeds, the control loop required ultra-low latency. By optimizing the **IPOPT** interior-point solver and leveraging **CppAD** for exact derivatives, the system consistently achieves solve times of **<10ms** on the **NVIDIA Jetson Orin**.
 
 * **Algorithmic Differentiation:** Used **CppAD** to provide the solver with exact analytical Jacobians and Hessians. This eliminated the overhead and inaccuracy of numerical finite-difference methods, leading to faster convergence in fewer iterations.
-* **Warm-Starting:** Implemented a warm-starting strategy where the solver initialized with the solution from the previous time step, reducing the number of iterations required to find the optimal trajectory.
-* **CPU Optimization:** Achieved a total IPOPT CPU time of **~6ms** per solve, with NLP function evaluations taking only **~1ms**, ensuring the vehicle can react to dynamic changes in real-time.
+* **Warm-Starting:** Implemented a warm-starting strategy where the solver initialised with the solution from the previous time step, reducing the number of iterations required to find the optimal trajectory.
+* **CPU Optimisation:** Achieved a total IPOPT CPU time of **~6ms** per solve, with NLP function evaluations taking only **~1ms**, ensuring the vehicle can react to dynamic changes in real-time.
+* **Multi-Threaded Architecture:** Designed as a thread-safe ROS 2 node to minimise blocking and maximise throughput in a distributed system.
 
 ### 🛡️ Safety & Reliability
 The NMPC doesn't just drive fast; it drives **reliably**:
-* **Constraint Satisfaction:** The solver explicitly respects physical limits, such as maximum steering rates and tire friction circles, preventing "tank-slappers" or loss of traction.
+* **Constraint Satisfaction:** The solver explicitly respects physical limits, such as maximum steering rates and tyre friction circles, preventing "tank-slappers" or loss of traction.
 * **Predictive Collision Avoidance:** By predicting a 2-3 second horizon, the controller can begin braking or adjusting lines well before reaching a sharp turn, ensuring the car stays within track boundaries even at **15m/s+**.
 
 ### 📊 Comparative Analysis
