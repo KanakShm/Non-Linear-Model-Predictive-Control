@@ -7,11 +7,11 @@
 
 A high-performance C++ implementation of a Non-Linear Model Predictive Controller designed for a Formula Student autonomous race car. This repository contains the core optimisation logic, vehicle modelling, and ROS 2 integration used by **UNSW Redback Racing**.
 
+![RB25](https://github.com/user-attachments/assets/9f908056-de76-4f4b-ac26-7a2e891ce93a)
+
 ## 🚀 Overview
 
 This project tackles the challenge of high-speed autonomous navigation by solving a constrained non-linear optimisation problem in real-time. By predicting future vehicle states and optimising control inputs over a receding horizon, the controller accounts for non-linear vehicle dynamics and tire slip, which are critical at the limits of handling.
-
-![RB25](https://github.com/user-attachments/assets/9f908056-de76-4f4b-ac26-7a2e891ce93a)
 
 ## 🛠 Technical Stack
 
